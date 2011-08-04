@@ -1,4 +1,5 @@
 all: write
+all: write read
 
 write: write.s
 	as write.s -o write.o 
