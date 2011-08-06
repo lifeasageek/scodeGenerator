@@ -70,10 +70,18 @@ class ReadScodeGen():
 
         
         fstr = fstr.replace("0xbfbf", "0x%04x" % self.convertPortNum(self.portNum))
-        self.ipAddr = self.convertIpAddrStr(self.ipAddrStr)
-        fstr = fstr.replace("0x0100007f", "0x%08x" % self.ipAddr)
+
+        ipValues = self.ipAddrStr.split(":")
+        fstr = fstr.replace("0x11111111", ("0x%04x%04x" % (self.convertPortNum(int(ipValues[1],16)),
+                                                           self.convertPortNum(int(ipValues[0],16)))))        
+        fstr = fstr.replace("0x11111112", ("0x%04x%04x" % (self.convertPortNum(int(ipValues[3],16)),
+                                                           self.convertPortNum(int(ipValues[2],16)))))        
+        fstr = fstr.replace("0x11111113", ("0x%04x%04x" % (self.convertPortNum(int(ipValues[5],16)),
+                                                           self.convertPortNum(int(ipValues[4],16)))))        
+        fstr = fstr.replace("0x11111114", ("0x%04x%04x" % (self.convertPortNum(int(ipValues[7],16)),
+                                                           self.convertPortNum(int(ipValues[6],16)))))
         
-        sys.stdout.write("[*] IP Addr : [%s] [0x%08x]\n" % ( self.ipAddrStr, self.ipAddr))
+        sys.stdout.write("[*] IP Addr : [%s]\n" % ( self.ipAddrStr))
         sys.stdout.write("[*] Port : [0x%04x] [%d]\n" % (self.portNum, self.portNum))
         
         open(self.asmFilename, "w").write(fstr)
@@ -153,7 +161,12 @@ class ReadScodeGen():
         return scodeBinStr
 
 if __name__ == "__main__":
-    gen = ReadScodeGen( "/tmp/key", 0x4, "192.168.43.128", 23456, xorKey=0x88, platform="freebsd", encodeFlag=True)
+    #gen = ReadScodeGen( "/tmp/key", 0x4, "192.168.43.128", 23456, xorKey=0x88, platform="freebsd", encodeFlag=True)
+    #gen = ReadScodeGen( "/tmp/key", 0x4, "127.0.0.1", 23456, xorKey=0x88, platform="freebsd", encodeFlag=False)
+
+    #gen = ReadScodeGen( "/tmp/key", 0x10, "abcd:1234:abcd:1234:abcd:1234:abcd:1235", 12345, xorKey=0x88, platform="freebsd", encodeFlag=False)
+    ipAddrStr = "dc19:c7f:2011:2:0000:0000:0000:153"    
+    gen = ReadScodeGen( "/tmp/key", 40, ipAddrStr, 23456, xorKey=0x88, platform="freebsd", encodeFlag=True)        
     gen.getBinScode()
     print gen.getPythonFormatScode()
     #print gen.getCppFormatScode()    
